@@ -1,8 +1,8 @@
 Разбор цепочек
----- Протокол ------- Дата: 07.06.2018 10:19:13
+---- Протокол ------- Дата: 10.09.2018 20:47:13
 ---- Параметры -------
--log: D:\MyFiles\BSTU\1st\2s\ЯП\Labs\LPLab13\Debug\LPLab10.exe.log
--out: D:\MyFiles\BSTU\1st\2s\ЯП\Labs\LPLab13\Debug\LPLab10.exe.out
+-log: D:\MyFiles\BSTU\2st\1st\YAP\WorkLabs\LPLab14\Debug\LPLab10.exe.log
+-out: D:\MyFiles\BSTU\2st\1st\YAP\WorkLabs\LPLab14\Debug\LPLab10.exe.out
 -in: input.txt
 Цепочка 0 не распознана. Элемент: 15
 Цепочка 1 не распознана. Элемент: 35
