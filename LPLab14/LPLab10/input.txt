@@ -1,0 +1,4 @@
+begin;returnabs
+calc;abspr;     end;|begin;    returnabspr;end;|begin; return abspr;abspr;       end;|begin;     return   abscalc;abscalc;abscalc;     end;|begin;     return   abspr;abscalc;   end;
+begin;returnabspr;end;|begin;returnabscalc;abscalc;end;
+begin;return abscalc;abscalc ;end;|begin;returnabscalc;abscalc;end; 
