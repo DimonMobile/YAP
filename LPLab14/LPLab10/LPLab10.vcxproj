@@ -150,7 +150,9 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="FST.h" />
     <ClInclude Include="In.h" />
+    <ClInclude Include="IT.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="LT.h" />
     <ClInclude Include="Parm.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

@@ -1,7 +1,7 @@
 #pragma once
 #define IN_MAX_LEN_TEXT 1024*1024
 #define IN_CODE_ENDL '\n'
-#define IN_AVAILABLE_CHARS "integerINTEGER"
+#define IN_AVAILABLE_CHARS "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZàáâãäå¸æçèéêëìíîïğñòóôõö÷üûúışÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ÜÛÚİŞß(){}',+*=-/;. \n\r\t"
 
 namespace In
 {

@@ -12,8 +12,8 @@ namespace In
 		if (!in.is_open())
 			throw ERROR_THROW(110);
 		IN res;
-		int currentLine(0);
-		int currentCol(0);
+		int currentLine(1);
+		int currentCol(1);
 		std::string fullText;
 		while (in)
 		{
@@ -44,7 +44,7 @@ namespace In
 			if (fullText[i] == '\n')
 			{
 				++currentLine;
-				currentCol = 0;
+				currentCol = 1;
 			}
 			else
 				++currentCol;

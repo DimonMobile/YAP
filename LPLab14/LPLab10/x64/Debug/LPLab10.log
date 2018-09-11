@@ -1,0 +1,10 @@
+﻿  stdafx.cpp
+  Error.cpp
+  FST.cpp
+c:\kek\yap\lplab14\lplab10\fst.cpp(57): warning C4267: 'initializing': conversion from 'size_t' to 'short', possible loss of data
+  In.cpp
+  Log.cpp
+  LPLab10.cpp
+  Parm.cpp
+  Generating Code...
+  LPLab10.vcxproj -> C:\kek\YAP\LPLab14\x64\Debug\LPLab10.exe
