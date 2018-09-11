@@ -50,8 +50,16 @@ namespace In
 				++currentCol;
 		}
 		*resPtr = '\0';
-		res.size = strlen((char*)res.text);
+		res.size = static_cast<int>(strlen((char*)res.text));
 		return res;
 	}
-	IN::IN() : size(0), lines(0), ignor(0), code IN_CODE_TABLE, text(nullptr) {}
+	IN::IN() : size(0), lines(0), ignor(0), text(nullptr) 
+	{
+		for (int i = 0; i < 256; ++i)
+			code[i] = F;
+		const char *available = IN_AVAILABLE_CHARS;
+		size_t avLength = strlen(available);
+		for (size_t i = 0; i < avLength; ++i)
+			code[available[i]] = T;
+	}
 }
