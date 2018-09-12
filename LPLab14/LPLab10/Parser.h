@@ -31,17 +31,16 @@ class Parser
 	enum class State
 	{
 		Undefined,
-		Identifier,
 		String,
 		Number,
 		Token
 	} m_state;
 
+	int m_line, m_position;
 	LT::LexTable m_table;
 	std::string m_token;
 
 	void processUndefined(const char ch);
-	void processIdentifier(const char ch);
 	void processString(const char ch);
 	void processNumber(const char ch);
 	void processToken(const char ch);
