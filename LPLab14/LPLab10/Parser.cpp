@@ -23,7 +23,7 @@ void Parser::processNumber(const char ch)
 {
 }
 
-void Parser::processKeyword(const char ch)
+void Parser::processToken(const char ch)
 {
 }
 
@@ -37,8 +37,8 @@ void Parser::putChar(const char ch)
 		case State::Identifier:
 			processIdentifier(ch);
 			break;
-		case State::Keyword:
-			processKeyword(ch);
+		case State::Token:
+			processToken(ch);
 			break;
 		case State::Number:
 			processNumber(ch);

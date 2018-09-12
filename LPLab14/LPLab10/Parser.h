@@ -5,6 +5,27 @@
 
 #include <string>
 
+namespace Constants
+{
+	const std::string integerToken = "integer";
+	const std::string stringToken = "string";
+	const std::string functionToken = "function";
+	const std::string declareToken = "declare";
+	const std::string returnToken = "return";
+	const std::string printToken = "print";
+	const std::string mainToken = "main";
+	const char semicolonToken = ';';
+	const char commaToken = ',';
+	const char leftBraceToken = '{';
+	const char rightBraceToken = '}';
+	const char leftBracketToken = '(';
+	const char rightBracketToken = ')';
+	const char plusToken = '+';
+	const char minusToken = '-';
+	const char starToken = '*';
+	const char slashToken = '/';
+};
+
 class Parser
 {
 	enum class State
@@ -13,7 +34,7 @@ class Parser
 		Identifier,
 		String,
 		Number,
-		Keyword
+		Token
 	} m_state;
 
 	LT::LexTable m_table;
@@ -23,7 +44,7 @@ class Parser
 	void processIdentifier(const char ch);
 	void processString(const char ch);
 	void processNumber(const char ch);
-	void processKeyword(const char ch);
+	void processToken(const char ch);
 public:
 	void putChar(const char ch);
 	Parser();

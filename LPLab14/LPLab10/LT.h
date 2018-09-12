@@ -13,13 +13,13 @@
 #define LEX_SEMICOLON	';'
 #define LEX_COMMA		','
 #define LEX_LEFTBRACE	'{'
-#define LEX_BRACELET	'}'
-#define LEX_LEFTHESIS	'('
-#define LEX_RIGHTHESIS	')'
+#define LEX_RIGHTBRACE	'}'
+#define LEX_LEFTBRACKET	'('
+#define LEX_RIGHTBRACEKT')'
 #define LEX_PLUS		'v'
 #define LEX_MINUS		'v'
 #define	LEX_STAR		'v'
-#define LEX_DIRSLASH	'v'
+#define LEX_SLASH		'v'
 
 namespace LT
 {
