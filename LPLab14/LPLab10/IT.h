@@ -39,4 +39,5 @@ namespace IT
 	void Add(IdTable &idtable, Entry entry);
 	Entry GetEntry(IdTable &idtable, int n);
 	int IsId(IdTable &idtable, char id[ID_MAXSIZE]);
+	void Delete(IdTable &idtable);
 }

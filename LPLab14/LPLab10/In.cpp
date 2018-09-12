@@ -60,6 +60,8 @@ namespace In
 		const char *available = IN_AVAILABLE_CHARS;
 		size_t avLength = strlen(available);
 		for (size_t i = 0; i < avLength; ++i)
-			code[available[i]] = T;
+		{
+			code[static_cast<unsigned char>(available[i])] = T;
+		}
 	}
 }

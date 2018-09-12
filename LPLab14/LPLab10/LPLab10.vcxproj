@@ -161,8 +161,10 @@
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="FST.cpp" />
     <ClCompile Include="In.cpp" />
+    <ClCompile Include="IT.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="LPLab10.cpp" />
+    <ClCompile Include="LT.cpp" />
     <ClCompile Include="Parm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
