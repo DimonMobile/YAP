@@ -47,18 +47,46 @@ void Parser::checkToken()
 		m_lexems.push_back(LEX_STAR);
 	else if (m_token == Constants::stringToken)
 		m_lexems.push_back(LEX_STRING);
+	else if (m_token == Constants::assignmentToken)
+		m_lexems.push_back(LEX_ASSIGNMENT);
+	else if (m_state == State::StringLiteral)
+			m_lexems.push_back(LEX_LITERAL);
 	else
-		m_lexems.push_back(LEX_ID);
+	{
+		bool allDigits = true;
+		for (const char chr : std::as_const(m_token))
+		{
+			if (!isdigit(chr))
+			{
+				allDigits = false;
+				break;
+			}
+		}
+		if (allDigits)
+			m_lexems.push_back(LEX_LITERAL);
+		else
+			m_lexems.push_back(LEX_ID);
+	}
 }
 
 inline void Parser::commitToken()
 {
-	m_token.clear();
 	checkToken();
+	m_token.clear();
 }
 
 void Parser::putChar(const unsigned char ch)
 {
+	if (m_state == State::StringLiteral)
+	{
+		if (ch == '\'')
+		{
+			commitToken();
+			m_state = State::Token;
+		}
+		return;
+	}
+
 	if (isspace(ch))
 	{
 		if (m_token.empty())
@@ -74,7 +102,14 @@ void Parser::putChar(const unsigned char ch)
 	{
 		if (m_token.empty())
 		{
-			m_token += ch;
+			if (ch == '\'')
+			{
+				m_state = State::StringLiteral;
+			}
+			else
+			{
+				m_token += ch;
+			}
 		}
 		else
 		{
@@ -126,7 +161,7 @@ Parser::~Parser()
 {
 	for (const char &item : std::as_const(m_lexems))
 	{
-		std::cout << item << " ";
+		std::cout << item;
 		if (item == ')' || item == ';' || item == '{' || item == '}')
 			std::cout << std::endl;
 	}

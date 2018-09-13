@@ -21,6 +21,7 @@
 #define LEX_MINUS			'v'
 #define	LEX_STAR			'v'
 #define LEX_SLASH			'v'
+#define LEX_ASSIGNMENT		'='
 
 namespace LT
 {

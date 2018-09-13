@@ -25,6 +25,7 @@ namespace Constants
 	const std::string minusToken = "-";
 	const std::string starToken = "*";
 	const std::string slashToken = "/";
+	const std::string assignmentToken = "=";
 };
 
 class Parser
