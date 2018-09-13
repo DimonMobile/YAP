@@ -1,9 +1,9 @@
 Разбор цепочек
----- Протокол ------- Дата: 12.09.2018 09:22:30
+---- Протокол ------- Дата: 13.09.2018 12:17:24
 ---- Параметры -------
--log: LPLab10.exe.log
--out: LPLab10.exe.out
--in: input.txt
+-log: C:\kek\YAP\LPLab14\Debug\LPLab10.exe.log
+-out: C:\kek\YAP\LPLab14\Debug\LPLab10.exe.out
+-in: ..\Debug\input.txt
 ---- Исходные данные -----
 Количество символов: 624
 Проигнорировано:     0

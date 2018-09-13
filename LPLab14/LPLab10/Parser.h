@@ -4,6 +4,7 @@
 #include "LT.h"
 
 #include <string>
+#include <list>
 
 namespace Constants
 {
@@ -14,38 +15,34 @@ namespace Constants
 	const std::string returnToken = "return";
 	const std::string printToken = "print";
 	const std::string mainToken = "main";
-	const char semicolonToken = ';';
-	const char commaToken = ',';
-	const char leftBraceToken = '{';
-	const char rightBraceToken = '}';
-	const char leftBracketToken = '(';
-	const char rightBracketToken = ')';
-	const char plusToken = '+';
-	const char minusToken = '-';
-	const char starToken = '*';
-	const char slashToken = '/';
+	const std::string semicolonToken = ";";
+	const std::string commaToken = ",";
+	const std::string leftBraceToken = "{";
+	const std::string rightBraceToken = "}";
+	const std::string leftBracketToken = "(";
+	const std::string rightBracketToken = ")";
+	const std::string plusToken = "+";
+	const std::string minusToken = "-";
+	const std::string starToken = "*";
+	const std::string slashToken = "/";
 };
 
 class Parser
 {
 	enum class State
 	{
-		Undefined,
-		String,
-		Number,
-		Token
+		Token,
+		StringLiteral
 	} m_state;
 
 	int m_line, m_position;
 	LT::LexTable m_table;
 	std::string m_token;
-
-	void processUndefined(const char ch);
-	void processString(const char ch);
-	void processNumber(const char ch);
-	void processToken(const char ch);
+	std::list<char> m_lexems;
+	void checkToken();
+	void commitToken();
 public:
-	void putChar(const char ch);
+	void putChar(const unsigned char ch);
 	Parser();
 	~Parser();
 };

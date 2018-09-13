@@ -1,25 +1,26 @@
 #pragma once
-#define LEXEMA_FIXSIZE	1
-#define LT_MAXSIZE		4096
-#define LT_TI_NULLIDX	0xFFFFFFFF
-#define LEX_INTEGER		't'
-#define LEX_STRING		't'
-#define LEX_ID			'i'
-#define LEX_LITERAL		'l'
-#define LEX_FUNCTION	'f'
-#define LEX_DECLARE		'd'
-#define LEX_RETURN		'r'
-#define LEX_PRINT		'p'
-#define LEX_SEMICOLON	';'
-#define LEX_COMMA		','
-#define LEX_LEFTBRACE	'{'
-#define LEX_RIGHTBRACE	'}'
-#define LEX_LEFTBRACKET	'('
-#define LEX_RIGHTBRACEKT')'
-#define LEX_PLUS		'v'
-#define LEX_MINUS		'v'
-#define	LEX_STAR		'v'
-#define LEX_SLASH		'v'
+#define LEXEMA_FIXSIZE		1
+#define LT_MAXSIZE			4096
+#define LT_TI_NULLIDX		0xFFFFFFFF
+#define LEX_INTEGER			't'
+#define LEX_STRING			't'
+#define LEX_ID				'i'
+#define LEX_LITERAL			'l'
+#define LEX_FUNCTION		'f'
+#define LEX_DECLARE			'd'
+#define LEX_RETURN			'r'
+#define LEX_PRINT			'p'
+#define LEX_MAIN			'm'
+#define LEX_SEMICOLON		';'
+#define LEX_COMMA			','
+#define LEX_LEFTBRACE		'{'
+#define LEX_RIGHTBRACE		'}'
+#define LEX_LEFTBRACKET		'('
+#define LEX_RIGHTBRACKET	')'
+#define LEX_PLUS			'v'
+#define LEX_MINUS			'v'
+#define	LEX_STAR			'v'
+#define LEX_SLASH			'v'
 
 namespace LT
 {
