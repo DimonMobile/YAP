@@ -6,51 +6,84 @@
 #include <iostream>
 #include <locale>
 
+
+namespace Constants
+{
+	const std::string integerToken = "integer";
+	const std::string stringToken = "string";
+	const std::string functionToken = "function";
+	const std::string declareToken = "declare";
+	const std::string returnToken = "return";
+	const std::string printToken = "print";
+	const std::string mainToken = "main";
+	const std::string semicolonToken = ";";
+	const std::string commaToken = ",";
+	const std::string leftBraceToken = "{";
+	const std::string rightBraceToken = "}";
+	const std::string leftBracketToken = "(";
+	const std::string rightBracketToken = ")";
+	const std::string plusToken = "+"; 
+	const std::string minusToken = "-";
+	const std::string starToken = "*";
+	const std::string slashToken = "/";
+	const std::string assignmentToken = "=";
+} // namespace Constants
+
 Parser::Parser() : m_line(1), m_position(1)
 {
-	m_table = LT::Create(LT_MAXSIZE);
+	m_lexTable = LT::Create(LT_MAXSIZE);
+	m_idTable = IT::Create(TI_MAXSIZE);
 }
 
 void Parser::checkToken()
 {
+	LT::Entry lexEntry;
+	lexEntry.sn = m_line;
+	lexEntry.idxTI = LT_TI_NULLIDX;
 	if (m_token == Constants::integerToken)
-		m_lexems.push_back(LEX_INTEGER);
+		memcpy(lexEntry.lexema, LEX_INTEGER, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::commaToken)
-		m_lexems.push_back(LEX_COMMA);
+		memcpy(lexEntry.lexema, LEX_COMMA, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::declareToken)
-		m_lexems.push_back(LEX_DECLARE);
+		memcpy(lexEntry.lexema, LEX_DECLARE, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::functionToken)
-		m_lexems.push_back(LEX_FUNCTION);
+		memcpy(lexEntry.lexema, LEX_FUNCTION, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::leftBraceToken)
-		m_lexems.push_back(LEX_LEFTBRACE);
+		memcpy(lexEntry.lexema, LEX_LEFTBRACE, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::leftBracketToken)
-		m_lexems.push_back(LEX_LEFTBRACKET);
+		memcpy(lexEntry.lexema, LEX_LEFTBRACKET, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::mainToken)
-		m_lexems.push_back(LEX_MAIN);
+		memcpy(lexEntry.lexema, LEX_MAIN, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::minusToken)
-		m_lexems.push_back(LEX_MINUS);
+		memcpy(lexEntry.lexema, LEX_MINUS, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::plusToken)
-		m_lexems.push_back(LEX_PLUS);
+		memcpy(lexEntry.lexema, LEX_PLUS, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::printToken)
-		m_lexems.push_back(LEX_PRINT);
+		memcpy(lexEntry.lexema, LEX_PRINT, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::returnToken)
-		m_lexems.push_back(LEX_RETURN);
+		memcpy(lexEntry.lexema, LEX_RETURN, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::rightBraceToken)
-		m_lexems.push_back(LEX_RIGHTBRACE);
+		memcpy(lexEntry.lexema, LEX_RIGHTBRACE, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::rightBracketToken)
-		m_lexems.push_back(LEX_RIGHTBRACKET);
+		memcpy(lexEntry.lexema, LEX_RIGHTBRACKET, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::semicolonToken)
-		m_lexems.push_back(LEX_SEMICOLON);
+		memcpy(lexEntry.lexema, LEX_SEMICOLON, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::slashToken)
-		m_lexems.push_back(LEX_SLASH);
+		memcpy(lexEntry.lexema, LEX_SLASH, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::starToken)
-		m_lexems.push_back(LEX_STAR);
+		memcpy(lexEntry.lexema, LEX_STAR, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::stringToken)
-		m_lexems.push_back(LEX_STRING);
+		memcpy(lexEntry.lexema, LEX_STRING, LEXEMA_FIXSIZE);
 	else if (m_token == Constants::assignmentToken)
-		m_lexems.push_back(LEX_ASSIGNMENT);
+		memcpy(lexEntry.lexema, LEX_ASSIGNMENT, LEXEMA_FIXSIZE);
 	else if (m_state == State::StringLiteral)
-			m_lexems.push_back(LEX_LITERAL);
+	{
+		memcpy(lexEntry.lexema, LEX_LITERAL, LEXEMA_FIXSIZE);
+
+		IT::Entry tiEntry;
+		tiEntry.iddatatype = IT::STR;
+		tiEntry.idtype = IT::L;
+	}
 	else
 	{
 		bool allDigits = true;
@@ -63,10 +96,11 @@ void Parser::checkToken()
 			}
 		}
 		if (allDigits)
-			m_lexems.push_back(LEX_LITERAL);
+			memcpy(lexEntry.lexema, LEX_LITERAL, LEXEMA_FIXSIZE);
 		else
-			m_lexems.push_back(LEX_ID);
+			memcpy(lexEntry.lexema, LEX_ID, LEXEMA_FIXSIZE);
 	}
+	LT::Add(m_lexTable, lexEntry);
 }
 
 inline void Parser::commitToken()
@@ -159,11 +193,10 @@ void Parser::putChar(const unsigned char ch)
 
 Parser::~Parser()
 {
-	for (const char &item : std::as_const(m_lexems))
+	for (int i = 0; i < m_lexTable.size; ++i)
 	{
-		std::cout << item;
-		if (item == ')' || item == ';' || item == '{' || item == '}')
-			std::cout << std::endl;
+		std::cout << m_lexTable.table[i].lexema[0];
 	}
-	LT::Delete(m_table);
+	LT::Delete(m_lexTable);
+	IT::Delete(m_idTable);
 }
