@@ -33,6 +33,8 @@ Parser::Parser() : m_line(1), m_position(1)
 {
 	m_lexTable = LT::Create(LT_MAXSIZE);
 	m_idTable = IT::Create(TI_MAXSIZE);
+	m_state = State::Token;
+	m_parseWait = ParseWait::Any;
 }
 
 void Parser::checkToken()
@@ -103,10 +105,180 @@ void Parser::checkToken()
 	LT::Add(m_lexTable, lexEntry);
 }
 
-inline void Parser::commitToken()
+void Parser::commitToken()
 {
 	checkToken();
+
+	if (m_parseWait == ParseWait::Any)
+	{
+		if (isTokenType())
+			m_parseWait = ParseWait::Function;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::Function)
+	{
+		if (isTokenFunctionToken())
+			m_parseWait = ParseWait::LiteralAfterFunction;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::LiteralAfterFunction)
+	{
+		if (isTokenValidIdentifierName())
+		{
+			// TODO: save to idientifier table
+			m_parseWait = ParseWait::LeftBracketAfterFunction;
+		}
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::LeftBracketAfterFunction)
+	{
+		if (isTokenLeftBracketToken())
+			m_parseWait = ParseWait::ParamTypeOrRightBracket;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::ParamTypeOrRightBracket)
+	{
+		if (isTokenRightBracketToken())
+		{
+			// TODO: ; or {
+		}
+		else if (isTokenType())
+		{
+			m_parseWait = ParseWait::ParamName;
+		}
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::ParamName)
+	{
+		if (isTokenValidIdentifierName())
+		{
+			m_parseWait = ParseWait::ParamComma;
+		}
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::ParamComma)
+	{
+		if (isTokenComma())
+			m_parseWait = ParseWait::ParamType;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::ParamType)
+	{
+		if (isTokenType())
+			m_parseWait = ParseWait::ParamName;
+		throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else
+		throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+
 	m_token.clear();
+}
+
+bool Parser::isTokenType()
+{
+	if (   m_token == Constants::stringToken
+		|| m_token == Constants::integerToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenPredefinedWord()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::declareToken)
+		return true;
+	if (m_token == Constants::functionToken)
+		return true;
+	if (m_token == Constants::integerToken)
+		return true;
+	if (m_token == Constants::mainToken)
+		return true;
+	if (m_token == Constants::printToken)
+		return true;
+	if (m_token == Constants::returnToken)
+		return true;
+	if (m_token == Constants::stringToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenStringLiteral()
+{
+	if (m_state == State::StringLiteral)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenNumberLiteral()
+{
+	if (m_token.empty())
+		return false;
+	for (size_t i = 0; i < m_token.size(); ++i)
+	{
+		if (!isdigit(m_token[i]))
+			return false;
+	}
+	return true;
+}
+
+bool Parser::isTokenValidIdentifierName()
+{
+	if (m_token.empty())
+		return false;
+	if (isTokenStringLiteral())
+		return false;
+	if (isTokenPredefinedWord())
+		return false;
+	for (size_t i = 0; i < m_token.size(); ++i)
+	{
+		if (!islower(m_token[i]))
+			return false;
+	}
+	return true;
+}
+
+bool Parser::isTokenFunctionToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::functionToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenLeftBracketToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::leftBracketToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenRightBracketToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::rightBracketToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenComma()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::commaToken)
+		return true;
+	return false;
 }
 
 void Parser::putChar(const unsigned char ch)
