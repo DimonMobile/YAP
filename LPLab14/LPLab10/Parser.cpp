@@ -113,6 +113,8 @@ void Parser::commitToken()
 	{
 		if (isTokenType())
 			m_parseWait = ParseWait::Function;
+		else if (isTokenMainToken())
+			m_parseWait = ParseWait::BlockBeginsOrSemicolon;
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
@@ -143,31 +145,25 @@ void Parser::commitToken()
 	else if (m_parseWait == ParseWait::ParamTypeOrRightBracket)
 	{
 		if (isTokenRightBracketToken())
-		{
 			m_parseWait = ParseWait::BlockBeginsOrSemicolon;
-		}
 		else if (isTokenType())
-		{
 			m_parseWait = ParseWait::ParamName;
-		}
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
 	else if (m_parseWait == ParseWait::ParamName)
 	{
 		if (isTokenValidIdentifierName())
-		{
 			m_parseWait = ParseWait::ParamCommaOrRightBracket;
-		}
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
 	else if (m_parseWait == ParseWait::ParamCommaOrRightBracket)
 	{
-		if (isTokenComma())
+		if (isTokenCommaToken())
 			m_parseWait = ParseWait::ParamType;
 		else if (isTokenRightBracketToken())
-			m_parseWait = ParseWait::Any;
+			m_parseWait = ParseWait::BlockBeginsOrSemicolon;
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
@@ -183,12 +179,73 @@ void Parser::commitToken()
 		if (isTokenSemicolonToken())
 			m_parseWait = ParseWait::Any;
 		else if (isTokenLeftBraceToken())
-		{
-			// TODO: block begins
-		}
+			m_parseWait = ParseWait::InBlockAny;
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
-			
+	}
+	else if (m_parseWait == ParseWait::InBlockAny)
+	{
+		if (isTokenDeclareToken())
+			m_parseWait = ParseWait::InBlockType;
+		else if (isTokenValidIdentifierName())
+			m_parseWait = ParseWait::InBlockAssignment;
+		else if (isTokenReturnToken())
+			m_parseWait = ParseWait::InBlockIdentifierOrLiteral;
+		else if (isTokenRightBraceToken())
+			m_parseWait = ParseWait::EndBlockSemicolon;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::InBlockType)
+	{
+		if (isTokenType())
+			m_parseWait = ParseWait::InBlockIdentifierOrFunction;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::InBlockIdentifierOrFunction)
+	{
+		if (isTokenValidIdentifierName())
+			m_parseWait = ParseWait::InBlockSemicolon;
+		else if (isTokenFunctionToken())
+			m_parseWait = ParseWait::InBlockExpression;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::InBlockSemicolon)
+	{
+		if (isTokenSemicolonToken())
+			m_parseWait = ParseWait::InBlockAny;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::InBlockAssignment)
+	{
+		if (isTokenAssignmentToken())
+			m_parseWait = ParseWait::InBlockExpression;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::InBlockExpression)
+	{
+		if (isTokenSemicolonToken())
+			m_parseWait = ParseWait::InBlockAny;
+		else
+			m_parseWait = ParseWait::InBlockExpression;
+	}
+	else if (m_parseWait == ParseWait::InBlockIdentifierOrLiteral)
+	{
+		if (isTokenStringLiteral() || isTokenNumberLiteral() || isTokenValidIdentifierName())
+			m_parseWait = ParseWait::InBlockSemicolon;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::EndBlockSemicolon)
+	{
+		if (isTokenSemicolonToken())
+			m_parseWait = ParseWait::Any;
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
 	else
 		throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
@@ -291,7 +348,7 @@ bool Parser::isTokenLeftBraceToken()
 {
 	if (m_state == State::StringLiteral)
 		return false;
-	if (m_token == Constants::rightBraceToken)
+	if (m_token == Constants::leftBraceToken)
 		return true;
 	return false;
 }
@@ -314,11 +371,59 @@ bool Parser::isTokenSemicolonToken()
 	return false;
 }
 
-bool Parser::isTokenComma()
+bool Parser::isTokenCommaToken()
 {
 	if (m_state == State::StringLiteral)
 		return false;
 	if (m_token == Constants::commaToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenDeclareToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::declareToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenAssignmentToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::assignmentToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenOperator()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if  (   m_token == Constants::plusToken
+		||	m_token == Constants::minusToken
+		||	m_token == Constants::starToken
+		||	m_token == Constants::slashToken )
+		return true;
+	return false;
+}
+
+bool Parser::isTokenReturnToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::returnToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenMainToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::mainToken)
 		return true;
 	return false;
 }

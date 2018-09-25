@@ -19,6 +19,7 @@ class Parser
 	{
 		Any,
 		Function,
+		Main,
 		LiteralAfterFunction,
 		LeftBracketAfterFunction,
 		RightBracketAfterFunction,
@@ -26,7 +27,18 @@ class Parser
 		ParamType,
 		ParamName,
 		ParamCommaOrRightBracket,
-		BlockBeginsOrSemicolon
+		BlockBeginsOrSemicolon,
+		InBlockAny,
+		InBlockDeclare,
+		InBlockType,
+		InBlockIdentifierOrFunction,
+		InBlockIdentifierOrLiteral,
+		InBlockLiteral,
+		InBlockSemicolon,
+		InBlockAssignment,
+		InBlockExpression,
+		InBlockReturn,
+		EndBlockSemicolon
 	} m_parseWait;
 
 	int m_line, m_position;
@@ -46,7 +58,12 @@ class Parser
 	bool isTokenLeftBraceToken();
 	bool isTokenRightBraceToken();
 	bool isTokenSemicolonToken();
-	bool isTokenComma();
+	bool isTokenCommaToken();
+	bool isTokenDeclareToken();
+	bool isTokenAssignmentToken();
+	bool isTokenOperator();
+	bool isTokenReturnToken();
+	bool isTokenMainToken();
 public:
 	void putChar(const unsigned char ch);
 	Parser();
