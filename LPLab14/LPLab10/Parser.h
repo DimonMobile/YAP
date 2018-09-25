@@ -25,7 +25,8 @@ class Parser
 		ParamTypeOrRightBracket,
 		ParamType,
 		ParamName,
-		ParamComma
+		ParamCommaOrRightBracket,
+		BlockBeginsOrSemicolon
 	} m_parseWait;
 
 	int m_line, m_position;
@@ -42,6 +43,9 @@ class Parser
 	bool isTokenFunctionToken();
 	bool isTokenLeftBracketToken();
 	bool isTokenRightBracketToken();
+	bool isTokenLeftBraceToken();
+	bool isTokenRightBraceToken();
+	bool isTokenSemicolonToken();
 	bool isTokenComma();
 public:
 	void putChar(const unsigned char ch);

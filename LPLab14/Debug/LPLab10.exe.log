@@ -1,7 +1,0 @@
-Разбор цепочек
----- Протокол ------- Дата: 22.09.2018 13:45:50
----- Параметры -------
--log: C:\kek\YAP\LPLab14\Debug\LPLab10.exe.log
--out: C:\kek\YAP\LPLab14\Debug\LPLab10.exe.out
--in: ..\Debug\input.txt
-Ошибка 3: Ошибка синтаксиса, строка 1, позиция 32

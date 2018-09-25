@@ -144,7 +144,7 @@ void Parser::commitToken()
 	{
 		if (isTokenRightBracketToken())
 		{
-			// TODO: ; or {
+			m_parseWait = ParseWait::BlockBeginsOrSemicolon;
 		}
 		else if (isTokenType())
 		{
@@ -157,15 +157,17 @@ void Parser::commitToken()
 	{
 		if (isTokenValidIdentifierName())
 		{
-			m_parseWait = ParseWait::ParamComma;
+			m_parseWait = ParseWait::ParamCommaOrRightBracket;
 		}
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
-	else if (m_parseWait == ParseWait::ParamComma)
+	else if (m_parseWait == ParseWait::ParamCommaOrRightBracket)
 	{
 		if (isTokenComma())
 			m_parseWait = ParseWait::ParamType;
+		else if (isTokenRightBracketToken())
+			m_parseWait = ParseWait::Any;
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
@@ -173,7 +175,20 @@ void Parser::commitToken()
 	{
 		if (isTokenType())
 			m_parseWait = ParseWait::ParamName;
-		throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::BlockBeginsOrSemicolon)
+	{
+		if (isTokenSemicolonToken())
+			m_parseWait = ParseWait::Any;
+		else if (isTokenLeftBraceToken())
+		{
+			// TODO: block begins
+		}
+		else
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+			
 	}
 	else
 		throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
@@ -268,6 +283,33 @@ bool Parser::isTokenRightBracketToken()
 	if (m_state == State::StringLiteral)
 		return false;
 	if (m_token == Constants::rightBracketToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenLeftBraceToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::rightBraceToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenRightBraceToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::rightBraceToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenSemicolonToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::semicolonToken)
 		return true;
 	return false;
 }
