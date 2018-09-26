@@ -31,14 +31,16 @@ class Parser
 		InBlockAny,
 		InBlockDeclare,
 		InBlockType,
-		InBlockIdentifierOrFunction,
+		InBlockIdentifierOrFunctionOrExpression,
 		InBlockIdentifierOrLiteral,
 		InBlockLiteral,
 		InBlockSemicolon,
+		InBlockExpressionOrSemicolon,
 		InBlockAssignment,
 		InBlockExpression,
 		InBlockReturn,
-		EndBlockSemicolon
+		InBlockPrint,
+		EndBlockSemicolon,
 	} m_parseWait;
 
 	int m_line, m_position;
@@ -64,6 +66,7 @@ class Parser
 	bool isTokenOperator();
 	bool isTokenReturnToken();
 	bool isTokenMainToken();
+	bool isTokenPrintToken();
 public:
 	void putChar(const unsigned char ch);
 	Parser();

@@ -193,31 +193,33 @@ void Parser::commitToken()
 			m_parseWait = ParseWait::InBlockIdentifierOrLiteral;
 		else if (isTokenRightBraceToken())
 			m_parseWait = ParseWait::EndBlockSemicolon;
+		else if (isTokenPrintToken())
+			m_parseWait = ParseWait::InBlockExpression;
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
 	else if (m_parseWait == ParseWait::InBlockType)
 	{
 		if (isTokenType())
-			m_parseWait = ParseWait::InBlockIdentifierOrFunction;
+			m_parseWait = ParseWait::InBlockIdentifierOrFunctionOrExpression;
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
-	else if (m_parseWait == ParseWait::InBlockIdentifierOrFunction)
+	else if (m_parseWait == ParseWait::InBlockIdentifierOrFunctionOrExpression)
 	{
 		if (isTokenValidIdentifierName())
 			m_parseWait = ParseWait::InBlockSemicolon;
 		else if (isTokenFunctionToken())
 			m_parseWait = ParseWait::InBlockExpression;
 		else
-			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+			m_parseWait = ParseWait::InBlockExpression;
 	}
 	else if (m_parseWait == ParseWait::InBlockSemicolon)
 	{
 		if (isTokenSemicolonToken())
 			m_parseWait = ParseWait::InBlockAny;
 		else
-			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+			m_parseWait = ParseWait::InBlockExpression;
 	}
 	else if (m_parseWait == ParseWait::InBlockAssignment)
 	{
@@ -235,7 +237,7 @@ void Parser::commitToken()
 	}
 	else if (m_parseWait == ParseWait::InBlockIdentifierOrLiteral)
 	{
-		if (isTokenStringLiteral() || isTokenNumberLiteral() || isTokenValidIdentifierName())
+		if (isTokenValidIdentifierName() || isTokenNumberLiteral() || isTokenStringLiteral())
 			m_parseWait = ParseWait::InBlockSemicolon;
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
@@ -424,6 +426,15 @@ bool Parser::isTokenMainToken()
 	if (m_state == State::StringLiteral)
 		return false;
 	if (m_token == Constants::mainToken)
+		return true;
+	return false;
+}
+
+bool Parser::isTokenPrintToken()
+{
+	if (m_state == State::StringLiteral)
+		return false;
+	if (m_token == Constants::printToken)
 		return true;
 	return false;
 }
