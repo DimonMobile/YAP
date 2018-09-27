@@ -2,6 +2,7 @@
 
 #include "IT.h"
 #include "LT.h"
+#include "Log.h"
 
 #include <string>
 #include <list>
@@ -44,6 +45,7 @@ class Parser
 	} m_parseWait;
 
 	int m_line, m_position;
+	Log::LOG m_log;
 	LT::LexTable m_lexTable;
 	IT::IdTable m_idTable;
 	std::string m_token;
@@ -68,8 +70,10 @@ class Parser
 	bool isTokenMainToken();
 	bool isTokenPrintToken();
 public:
+	static std::string intToStr(int par, int precision = 3);
 	void putChar(const unsigned char ch);
-	Parser();
+	void printLexems();
+	Parser(Log::LOG log);
 	~Parser();
 };
 

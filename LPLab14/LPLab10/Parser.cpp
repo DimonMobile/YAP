@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Parser.h"
 #include "Error.h"
-#include "LT.h"
 
 #include <iostream>
 #include <locale>
@@ -29,8 +28,9 @@ namespace Constants
 	const std::string assignmentToken = "=";
 } // namespace Constants
 
-Parser::Parser() : m_line(1), m_position(1)
+Parser::Parser(Log::LOG log) : m_line(1), m_position(1)
 {
+	m_log = log;
 	m_lexTable = LT::Create(LT_MAXSIZE);
 	m_idTable = IT::Create(TI_MAXSIZE);
 	m_state = State::Token;
@@ -439,6 +439,20 @@ bool Parser::isTokenPrintToken()
 	return false;
 }
 
+std::string Parser::intToStr(int par, int precision)
+{
+	char data[128];
+	_itoa_s(par, data, 10);
+	std::string result(data);
+	int pr = precision - result.size();
+	if (pr > 0)
+	{
+		for (int i = 0; i < pr; ++i)
+			result.insert(result.begin(), '0');
+	}
+	return result;
+}
+
 void Parser::putChar(const unsigned char ch)
 {
 	if (m_state == State::StringLiteral)
@@ -521,12 +535,32 @@ void Parser::putChar(const unsigned char ch)
 	}
 }
 
+void Parser::printLexems()
+{
+	int currentLineIdx = 1;
+	std::string currentLine;
+	for (int i = 0; i < m_lexTable.size;)
+	{
+		char currentLexema[LEXEMA_FIXSIZE + 1];
+		strncpy_s(currentLexema, m_lexTable.table[i].lexema, LEXEMA_FIXSIZE);
+		if (currentLineIdx == m_lexTable.table[i].sn)
+		{
+			currentLine += currentLexema;
+		}
+		else
+		{
+			Log::WriteLine(m_log, intToStr(currentLineIdx).c_str(), " ", currentLine.c_str(), "");
+			currentLine.clear();
+			++currentLineIdx;
+			continue;
+		}
+		++i;
+	}
+	Log::WriteLine(m_log, intToStr(currentLineIdx).c_str(), " ", currentLine.c_str(), "");
+}
+
 Parser::~Parser()
 {
-	for (int i = 0; i < m_lexTable.size; ++i)
-	{
-		std::cout << m_lexTable.table[i].lexema[0];
-	}
 	LT::Delete(m_lexTable);
 	IT::Delete(m_idTable);
 }
