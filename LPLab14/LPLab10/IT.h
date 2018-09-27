@@ -14,7 +14,7 @@ namespace IT
 	struct Entry
 	{
 		int idxfirstLE;
-		char id[ID_MAXSIZE];
+		char id[ID_MAXSIZE+1];
 		IDDATATYPE iddatatype;
 		IDTYPE idtype;
 		union

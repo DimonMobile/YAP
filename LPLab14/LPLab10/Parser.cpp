@@ -8,6 +8,11 @@
 
 namespace Constants
 {
+	// Information messages
+	const std::string lexemsTableMessage = "----- Таблица лексем -----";
+	const std::string identifiersTableMessage = "----- Таблица идентификаторов -----";
+
+	// Tokens
 	const std::string integerToken = "integer";
 	const std::string stringToken = "string";
 	const std::string functionToken = "function";
@@ -28,7 +33,7 @@ namespace Constants
 	const std::string assignmentToken = "=";
 } // namespace Constants
 
-Parser::Parser(Log::LOG log) : m_line(1), m_position(1)
+Parser::Parser(Log::LOG log) : m_line(1), m_position(1), m_isFunction(false)
 {
 	m_log = log;
 	m_lexTable = LT::Create(LT_MAXSIZE);
@@ -81,10 +86,6 @@ void Parser::checkToken()
 	else if (m_state == State::StringLiteral)
 	{
 		memcpy(lexEntry.lexema, LEX_LITERAL, LEXEMA_FIXSIZE);
-
-		IT::Entry tiEntry;
-		tiEntry.iddatatype = IT::STR;
-		tiEntry.idtype = IT::L;
 	}
 	else
 	{
@@ -112,28 +113,51 @@ void Parser::commitToken()
 	if (m_parseWait == ParseWait::Any)
 	{
 		if (isTokenType())
+		{
 			m_parseWait = ParseWait::Function;
+			applyTokenType();
+		}
 		else if (isTokenMainToken())
+		{
 			m_parseWait = ParseWait::BlockBeginsOrSemicolon;
+		}
 		else
+		{
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+		}
 	}
 	else if (m_parseWait == ParseWait::Function)
 	{
 		if (isTokenFunctionToken())
-			m_parseWait = ParseWait::LiteralAfterFunction;
-		else
-			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
-	}
-	else if (m_parseWait == ParseWait::LiteralAfterFunction)
-	{
-		if (isTokenValidIdentifierName())
 		{
-			// TODO: save to idientifier table
-			m_parseWait = ParseWait::LeftBracketAfterFunction;
+			m_parseWait = ParseWait::IdentifierAfterFunction;
+			m_isFunction = true;
 		}
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+	}
+	else if (m_parseWait == ParseWait::IdentifierAfterFunction)
+	{
+		if (isTokenValidIdentifierName())
+		{
+			IT::Entry entry;
+			strncpy_s(entry.id, m_token.c_str(), ID_MAXSIZE);
+			entry.idtype = IT::F;
+			if (m_type == Type::String)
+				entry.iddatatype = IT::STR;
+			else if (m_type == Type::Integer)
+				entry.iddatatype = IT::INT;
+			entry.idxfirstLE = m_lexTable.size - 1;
+			IT::Add(m_idTable, entry);
+
+			m_isFunction = false;
+
+			m_parseWait = ParseWait::LeftBracketAfterFunction;
+		}
+		else
+		{
+			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+		}
 	}
 	else if (m_parseWait == ParseWait::LeftBracketAfterFunction)
 	{
@@ -145,18 +169,39 @@ void Parser::commitToken()
 	else if (m_parseWait == ParseWait::ParamTypeOrRightBracket)
 	{
 		if (isTokenRightBracketToken())
+		{
 			m_parseWait = ParseWait::BlockBeginsOrSemicolon;
+		}
 		else if (isTokenType())
+		{
 			m_parseWait = ParseWait::ParamName;
+			applyTokenType();
+		}
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
 	else if (m_parseWait == ParseWait::ParamName)
 	{
 		if (isTokenValidIdentifierName())
+		{
+			IT::Entry entry;
+			strncpy_s(entry.id, m_token.c_str(), ID_MAXSIZE);
+			entry.idtype = IT::P;
+			if (m_type == Type::String)
+				entry.iddatatype = IT::STR;
+			else if (m_type == Type::Integer)
+				entry.iddatatype = IT::INT;
+			entry.idxfirstLE = m_lexTable.size - 1;
+			IT::Add(m_idTable, entry);
+
+			m_isFunction = false;
+
 			m_parseWait = ParseWait::ParamCommaOrRightBracket;
+		}
 		else
+		{
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+		}
 	}
 	else if (m_parseWait == ParseWait::ParamCommaOrRightBracket)
 	{
@@ -170,9 +215,14 @@ void Parser::commitToken()
 	else if (m_parseWait == ParseWait::ParamType)
 	{
 		if (isTokenType())
+		{
 			m_parseWait = ParseWait::ParamName;
+			applyTokenType();
+		}
 		else
+		{
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
+		}
 	}
 	else if (m_parseWait == ParseWait::BlockBeginsOrSemicolon)
 	{
@@ -201,14 +251,32 @@ void Parser::commitToken()
 	else if (m_parseWait == ParseWait::InBlockType)
 	{
 		if (isTokenType())
+		{
 			m_parseWait = ParseWait::InBlockIdentifierOrFunctionOrExpression;
+			applyTokenType();
+		}
 		else
 			throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 	}
 	else if (m_parseWait == ParseWait::InBlockIdentifierOrFunctionOrExpression)
 	{
 		if (isTokenValidIdentifierName())
+		{
+			// TODO: add to identifier table
+			IT::Entry entry;
+			strncpy_s(entry.id, m_token.c_str(), ID_MAXSIZE);
+			entry.idtype = IT::V;
+			if (m_type == Type::String)
+				entry.iddatatype = IT::STR;
+			else if (m_type == Type::Integer)
+				entry.iddatatype = IT::INT;
+			entry.idxfirstLE = m_lexTable.size - 1;
+			IT::Add(m_idTable, entry);
+
+			m_isFunction = false;
+
 			m_parseWait = ParseWait::InBlockSemicolon;
+		}
 		else if (isTokenFunctionToken())
 			m_parseWait = ParseWait::InBlockExpression;
 		else
@@ -253,6 +321,14 @@ void Parser::commitToken()
 		throw ERROR_THROW_IN(3, m_line, m_position - m_token.size());
 
 	m_token.clear();
+}
+
+void Parser::applyTokenType()
+{
+	if (m_token == Constants::stringToken)
+		m_type = Type::String;
+	else if (m_token == Constants::integerToken)
+		m_type = Type::Integer;
 }
 
 bool Parser::isTokenType()
@@ -537,6 +613,7 @@ void Parser::putChar(const unsigned char ch)
 
 void Parser::printLexems()
 {
+	Log::WriteLine(m_log, Constants::lexemsTableMessage.c_str(), "");
 	int currentLineIdx = 1;
 	std::string currentLine;
 	for (int i = 0; i < m_lexTable.size;)
@@ -557,6 +634,18 @@ void Parser::printLexems()
 		++i;
 	}
 	Log::WriteLine(m_log, intToStr(currentLineIdx).c_str(), " ", currentLine.c_str(), "");
+}
+
+void Parser::printIdentifiers()
+{
+	Log::WriteLine(m_log, Constants::identifiersTableMessage.c_str(), "");
+	for (int i = 0; i < m_idTable.size; ++i)
+	{
+		Log::WriteLine(m_log, 
+			m_idTable.table[i].idtype == IT::F ? "function" : m_idTable.table[i].idtype == IT::P ? "param" : "variable", " ",
+			m_idTable.table[i].iddatatype == IT::STR ? "string" : "integer", " ",
+			m_idTable.table[i].id, "");
+	}
 }
 
 Parser::~Parser()

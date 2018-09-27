@@ -10,6 +10,14 @@
 
 class Parser
 {
+	enum class Type
+	{
+		String,
+		Integer
+	} m_type;
+
+	bool m_isFunction;
+
 	enum class State
 	{
 		Token,
@@ -21,7 +29,7 @@ class Parser
 		Any,
 		Function,
 		Main,
-		LiteralAfterFunction,
+		IdentifierAfterFunction,
 		LeftBracketAfterFunction,
 		RightBracketAfterFunction,
 		ParamTypeOrRightBracket,
@@ -51,6 +59,7 @@ class Parser
 	std::string m_token;
 	void checkToken();
 	void commitToken();
+	void applyTokenType();
 	bool isTokenType();
 	bool isTokenPredefinedWord();
 	bool isTokenStringLiteral();
@@ -73,6 +82,7 @@ public:
 	static std::string intToStr(int par, int precision = 3);
 	void putChar(const unsigned char ch);
 	void printLexems();
+	void printIdentifiers();
 	Parser(Log::LOG log);
 	~Parser();
 };
