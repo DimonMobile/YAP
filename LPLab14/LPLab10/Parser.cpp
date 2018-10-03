@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Parser.h"
 #include "Error.h"
+#include "FST.h"
 
 #include <iostream>
 #include <locale>
@@ -399,7 +400,20 @@ bool Parser::isTokenFunctionToken()
 {
 	if (m_state == State::StringLiteral)
 		return false;
-	if (m_token == Constants::functionToken)
+
+	FST::FST fst(m_token.c_str(), 9
+		,	FST::NODE(1, FST::RELATION('f', 1))	//	0
+		,	FST::NODE(1, FST::RELATION('u', 2))	//	1
+		,	FST::NODE(1, FST::RELATION('n', 3))	//	2
+		,	FST::NODE(1, FST::RELATION('c', 4))	//	3
+		,	FST::NODE(1, FST::RELATION('t', 5))	//	4
+		,	FST::NODE(1, FST::RELATION('i', 6))	//	5
+		,	FST::NODE(1, FST::RELATION('o', 7))	//	6
+		,	FST::NODE(1, FST::RELATION('n', 8))	//	7
+		,	FST::NODE()			//	8
+		);
+
+	if (FST::execute(fst))
 		return true;
 	return false;
 }
@@ -460,9 +474,17 @@ bool Parser::isTokenCommaToken()
 
 bool Parser::isTokenDeclareToken()
 {
-	if (m_state == State::StringLiteral)
-		return false;
-	if (m_token == Constants::declareToken)
+	FST::FST fst(m_token.c_str(), 8
+		, FST::NODE(1, FST::RELATION('d', 1))	//	0
+		, FST::NODE(1, FST::RELATION('e', 2))	//	1
+		, FST::NODE(1, FST::RELATION('c', 3))	//	2
+		, FST::NODE(1, FST::RELATION('l', 4))	//	3
+		, FST::NODE(1, FST::RELATION('a', 5))	//	4
+		, FST::NODE(1, FST::RELATION('r', 6))	//	5
+		, FST::NODE(1, FST::RELATION('e', 7))	//	6
+		, FST::NODE()	//	7
+	);
+	if (FST::execute(fst))
 		return true;
 	return false;
 }
@@ -492,8 +514,19 @@ bool Parser::isTokenReturnToken()
 {
 	if (m_state == State::StringLiteral)
 		return false;
-	if (m_token == Constants::returnToken)
+
+	FST::FST fst(m_token.c_str(), 7
+		, FST::NODE(1, FST::RELATION('r', 1))	//	0
+		, FST::NODE(1, FST::RELATION('e', 2))	//	1
+		, FST::NODE(1, FST::RELATION('t', 3))	//	2
+		, FST::NODE(1, FST::RELATION('u', 4))	//	3
+		, FST::NODE(1, FST::RELATION('r', 5))	//	4
+		, FST::NODE(1, FST::RELATION('n', 6))	//	5
+		, FST::NODE()	//	6
+	);
+	if (FST::execute(fst))
 		return true;
+
 	return false;
 }
 
@@ -501,7 +534,15 @@ bool Parser::isTokenMainToken()
 {
 	if (m_state == State::StringLiteral)
 		return false;
-	if (m_token == Constants::mainToken)
+
+	FST::FST fst(m_token.c_str(), 5
+		,	FST::NODE(1, FST::RELATION('m', 1))	//	0
+		,	FST::NODE(1, FST::RELATION('a', 2))	//	1
+		,	FST::NODE(1, FST::RELATION('i', 3)) //	2
+		,	FST::NODE(1, FST::RELATION('n', 4))	//	3
+		,	FST::NODE()	//	4
+		);
+	if (FST::execute(fst))
 		return true;
 	return false;
 }
@@ -510,7 +551,17 @@ bool Parser::isTokenPrintToken()
 {
 	if (m_state == State::StringLiteral)
 		return false;
-	if (m_token == Constants::printToken)
+
+	FST::FST fst(m_token.c_str(), 6
+		,	FST::NODE(1, FST::RELATION('p', 1))	//	0
+		,	FST::NODE(1, FST::RELATION('r', 2))	//	1
+		,	FST::NODE(1, FST::RELATION('i', 3)) //	2
+		,	FST::NODE(1, FST::RELATION('n', 4))	//	3
+		,	FST::NODE(1, FST::RELATION('t', 5))	//	4
+		,	FST::NODE()	//	5
+	);
+
+	if (FST::execute(fst))
 		return true;
 	return false;
 }
