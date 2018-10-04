@@ -263,7 +263,6 @@ void Parser::commitToken()
 	{
 		if (isTokenValidIdentifierName())
 		{
-			// TODO: add to identifier table
 			IT::Entry entry;
 			strncpy_s(entry.id, m_token.c_str(), ID_MAXSIZE);
 			entry.idtype = IT::V;
@@ -692,10 +691,10 @@ void Parser::printIdentifiers()
 	Log::WriteLine(m_log, Constants::identifiersTableMessage.c_str(), "");
 	for (int i = 0; i < m_idTable.size; ++i)
 	{
-		Log::WriteLine(m_log, 
-			m_idTable.table[i].idtype == IT::F ? "function" : m_idTable.table[i].idtype == IT::P ? "param" : "variable", " ",
-			m_idTable.table[i].iddatatype == IT::STR ? "string" : "integer", " ",
-			m_idTable.table[i].id, "");
+		Log::WriteLine(m_log,
+			m_idTable.table[i].idtype == IT::F ? "function" : m_idTable.table[i].idtype == IT::P ? "param" : "variable", "\t",
+			m_idTable.table[i].iddatatype == IT::STR ? "string" : "integer", "\t",
+			m_idTable.table[i].id, "\t", intToStr(m_idTable.table[i].idxfirstLE).c_str(), "");
 	}
 }
 
