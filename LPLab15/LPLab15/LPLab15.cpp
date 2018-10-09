@@ -126,7 +126,7 @@ namespace Converter
 
 int main()
 {
-	const std::string sources[] = { "(a+b)/(j-g))*(c+d)-e", "(a+b)*(c+d)-e" };
+	const std::string sources[] = { "(a+b)/(j-g))*(c+d)-e", "(a+b)*(c+d)-e", "x*(x+y)" };
 	int srcNumber = sizeof(sources) / sizeof(decltype(*sources));
 	for (int i = 0; i < srcNumber; ++i)
 	{
