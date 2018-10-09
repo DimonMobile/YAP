@@ -8,6 +8,11 @@
 
 namespace Converter
 {
+	namespace Constants
+	{
+		const int debugTabSize = 20;
+	}
+
 	bool isOperation(char ch)
 	{ 
 		if (ch == '+' || ch == '-' || ch == '*' || ch == '/')
@@ -49,7 +54,7 @@ namespace Converter
 				std::string stackString;
 				for(std::vector<char>::const_reverse_iterator it = stack.crbegin(); it != stack.crend(); ++it)
 					stackString += *it;
-				std::cout << std::setw(15) << mysrc << std::setw(15) << result << std::setw(15) << stackString << std::endl;
+				std::cout << std::setw(Constants::debugTabSize) << mysrc << std::setw(Constants::debugTabSize) << result << std::setw(Constants::debugTabSize) << stackString << std::endl;
 				mysrc.erase(mysrc.begin());
 #endif
 				if (isalpha(ch))
@@ -106,12 +111,12 @@ namespace Converter
 				std::string stackString;
 				for (std::vector<char>::const_reverse_iterator it = stack.crbegin(); it != stack.crend(); ++it)
 					stackString += *it;
-				std::cout << std::setw(30) << result << std::setw(15) << stackString << std::endl;
+				std::cout << std::setw(Constants::debugTabSize * 2) << result << std::setw(Constants::debugTabSize) << stackString << std::endl;
 #endif
 				result += *i;
 			}
 #ifdef _DEBUG
-			std::cout << std::setw(30) << result << std::endl;
+			std::cout << std::setw(Constants::debugTabSize * 2) << result << std::endl;
 #endif
 			return result;
 		}
@@ -121,5 +126,12 @@ namespace Converter
 
 int main()
 {
-	std::cout << Converter::Polish::convert("(a+b)*(c+d)-e") << std::endl;
+	const std::string sources[] = { "(a+b)/(j-g))*(c+d)-e", "(a+b)*(c+d)-e" };
+	int srcNumber = sizeof(sources) / sizeof(decltype(*sources));
+	for (int i = 0; i < srcNumber; ++i)
+	{
+		std::cout << std::setfill('=') << std::setw(100) << '\n' << std::setfill(' ');
+		std::cout << "***\tSource:\t" << sources[i] << std::endl;
+		std::cout << "***\tResult:\t" << Converter::Polish::convert(sources[i]) << std::endl;
+	}
 }
