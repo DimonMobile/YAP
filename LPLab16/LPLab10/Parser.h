@@ -83,7 +83,9 @@ public:
 	void putChar(const unsigned char ch);
 	void printLexems();
 	void printIdentifiers();
+	LT::LexTable& lextable();
 	Parser(Log::LOG log);
+	Parser();
 	~Parser();
 };
 

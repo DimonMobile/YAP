@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "FST.h"
 #include <algorithm>
 

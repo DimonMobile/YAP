@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "LT.h"
 #include "Error.h"
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Parser.h"
 #include "Error.h"
 #include "FST.h"
@@ -41,6 +40,19 @@ Parser::Parser(Log::LOG log) : m_line(1), m_position(1), m_isFunction(false)
 	m_idTable = IT::Create(TI_MAXSIZE);
 	m_state = State::Token;
 	m_parseWait = ParseWait::Any;
+}
+
+Parser::Parser() : m_line(1), m_position(1), m_isFunction(false)
+{
+	m_lexTable = LT::Create(LT_MAXSIZE);
+	m_idTable = IT::Create(TI_MAXSIZE);
+	m_state = State::Token;
+	m_parseWait = ParseWait::Any;
+}
+
+LT::LexTable& Parser::lextable()
+{
+	return m_lexTable;
 }
 
 void Parser::checkToken()
@@ -700,6 +712,6 @@ void Parser::printIdentifiers()
 
 Parser::~Parser()
 {
-	LT::Delete(m_lexTable);
-	IT::Delete(m_idTable);
+	//LT::Delete(m_lexTable);
+	//IT::Delete(m_idTable);
 }

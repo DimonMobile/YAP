@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "In.h"
 #include "Error.h"
 #include <fstream>

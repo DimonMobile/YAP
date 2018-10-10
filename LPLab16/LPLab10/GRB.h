@@ -3,6 +3,8 @@
 typedef short GRBALPHABET;
 namespace GRB
 {
+#define NS(n) Rule::Chain::N(n)
+#define TS(n) Rule::Chain::T(n)
 	struct Rule
 	{
 		GRBALPHABET nn;
