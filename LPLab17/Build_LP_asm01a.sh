@@ -1,4 +1,4 @@
 #!/bin/bash
-
-as LP_asm01a.s -o LP_asm01a.o
-ld LP_asm01a.o -o LP_asm01a
+set -e
+as  LP_asm01a.s -o LP_asm01a.o
+ar -rcs LP_asm01a.a LP_asm01a.o
